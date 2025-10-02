@@ -4,7 +4,7 @@ import order_icon from './order_icon.png'
 import upload_area from './upload_area.png'
 import parcel_icon from './parcel_icon.svg'
 
-  const backendUrl = "https://shopping-website-backend-uaop.onrender.com"
+
 
 export const assets = {
     logo,
