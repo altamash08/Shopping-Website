@@ -1,14 +1,19 @@
 
-import React, { useState } from 'react'
 import axios from 'axios'
+import React, { useState } from 'react'
 import { backendUrl } from '../App'
 import { toast } from 'react-toastify'
 import Logo from './Logo'
 
 const Login = ({ setToken }) => {
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const API_URL = (
+        backendUrl || 'https://shopping-website-backend-u3u1.onrender.com'
+    ).replace(/\/+$/, '')
 
     const onSubmitHandler = async (e) => {
         e.preventDefault()
@@ -18,15 +23,11 @@ const Login = ({ setToken }) => {
         try {
             setLoading(true)
 
-            if (!backendUrl) {
-                throw new Error('Backend URL is not configured. Check VITE_BACKEND_URL.')
-            }
-
             const response = await axios.post(
-                `${backendUrl.replace(/\/+$/, '')}/api/user/admin`,
+                `${API_URL}/api/user/admin`,
                 {
                     email: email.trim(),
-                    password
+                    password: password
                 },
                 {
                     headers: {
@@ -38,7 +39,7 @@ const Login = ({ setToken }) => {
 
             if (response.data.success && response.data.token) {
                 setToken(response.data.token)
-                toast.success('Admin login successful!')
+                toast.success('Login successful!')
             } else {
                 toast.error(response.data.message || 'Invalid email or password')
             }
@@ -53,11 +54,10 @@ const Login = ({ setToken }) => {
                 )
             } else if (error.code === 'ECONNABORTED') {
                 toast.error('Server timeout. Please try again.')
-            } else if (error.message.includes('Backend URL')) {
-                toast.error(error.message)
             } else {
-                toast.error('Unable to connect to server. Check backend URL or server status.')
+                toast.error('Unable to connect to backend server.')
             }
+
         } finally {
             setLoading(false)
         }
@@ -66,10 +66,12 @@ const Login = ({ setToken }) => {
     return (
         <div className='flex min-h-screen items-center justify-center py-10'>
             <div className='holo w-full max-w-md rounded-[34px] p-[2px] shadow-float'>
+
                 <form
                     onSubmit={onSubmitHandler}
                     className='flex flex-col gap-4 rounded-[32px] bg-mist p-7 sm:p-10'
                 >
+
                     <Logo className='text-[length:1.5rem]' />
 
                     <h1 className='mt-6 font-display text-[length:clamp(1.6rem,4vw,2rem)] font-light leading-tight tracking-[-0.03em]'>
@@ -84,7 +86,7 @@ const Login = ({ setToken }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         value={email}
                         className='field'
-                        type='email'
+                        type="email"
                         placeholder='Email address'
                         aria-label='Email address'
                         autoComplete='email'
@@ -95,7 +97,7 @@ const Login = ({ setToken }) => {
                         onChange={(e) => setPassword(e.target.value)}
                         value={password}
                         className='field'
-                        type='password'
+                        type="password"
                         placeholder='Password'
                         aria-label='Password'
                         autoComplete='current-password'
@@ -104,11 +106,12 @@ const Login = ({ setToken }) => {
 
                     <button
                         className='btn btn-primary mt-3 w-full'
-                        type='submit'
+                        type="submit"
                         disabled={loading}
                     >
                         {loading ? 'Signing in...' : 'Sign in'}
                     </button>
+
                 </form>
             </div>
         </div>
