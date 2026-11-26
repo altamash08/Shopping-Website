@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
@@ -6,29 +7,45 @@ import Add from './pages/Add'
 import List from './pages/List'
 import Orders from './pages/Orders'
 import Login from './components/Login'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL
-export const currency = "₹"
+export const backendUrl = (
+  import.meta.env.VITE_BACKEND_URL ||
+  'https://shopping-website-backend-u3u1.onrender.com'
+).replace(/\/+$/, '')
+
+export const currency = '₹'
 
 const App = () => {
 
-  const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):'');
+  const [token, setToken] = useState(
+    localStorage.getItem('token') || ''
+  )
 
-  useEffect(()=>{
-    localStorage.setItem('token',token)
-  },[token])
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token)
+    } else {
+      localStorage.removeItem('token')
+    }
+  }, [token])
 
   return (
     <div className='mx-auto min-h-screen w-full max-w-[1280px] px-4 sm:px-8'>
+
       <ToastContainer position='bottom-right' />
-      {token === ""
-        ? <Login setToken={setToken} />
-        : <>
+
+      {token === '' ? (
+        <Login setToken={setToken} />
+      ) : (
+        <>
           <Navbar setToken={setToken} />
+
           <div className='mt-6 flex flex-col gap-6 pb-16 lg:flex-row lg:gap-10'>
+
             <Sidebar />
+
             <main className='min-w-0 flex-1'>
               <Routes>
                 <Route path='/' element={<Navigate to='/list' replace />} />
@@ -37,9 +54,11 @@ const App = () => {
                 <Route path='/orders' element={<Orders token={token} />} />
               </Routes>
             </main>
+
           </div>
         </>
-      }
+      )}
+
     </div>
   )
 }
